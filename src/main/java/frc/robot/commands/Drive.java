@@ -6,7 +6,9 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.OperatorConstants.*;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.CANDriveSubsystem;
 
@@ -15,6 +17,8 @@ public class Drive extends Command {
   /** Creates a new Drive. */
   CANDriveSubsystem driveSubsystem;
   CommandXboxController controller;
+  private final PIDController pidController = new PIDController(0.1, 0.0, 0.0);
+  
 
   public Drive(CANDriveSubsystem driveSystem, CommandXboxController driverController) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -26,6 +30,7 @@ public class Drive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    pidController.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,7 +40,11 @@ public class Drive extends Command {
   // controllable.
   @Override
   public void execute() {
+    
+
+
     driveSubsystem.driveArcade(-controller.getLeftY() * DRIVE_SCALING, controller.getRightX() * ROTATION_SCALING);
+
   }
 
   // Called once the command ends or is interrupted.

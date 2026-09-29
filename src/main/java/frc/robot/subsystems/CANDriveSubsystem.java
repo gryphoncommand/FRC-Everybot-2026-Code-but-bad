@@ -69,6 +69,14 @@ public class CANDriveSubsystem extends SubsystemBase {
     leftLeader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
+  public double getLeftLeaderSpeed(){
+    return leftLeader.get();
+  }
+
+  public double getRightLeaderSpeed(){
+    return rightLeader.get();
+  }
+
   @Override
   public void periodic() {
   }

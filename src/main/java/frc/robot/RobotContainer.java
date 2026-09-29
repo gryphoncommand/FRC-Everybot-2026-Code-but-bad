@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,6 +18,7 @@ import frc.robot.commands.Eject;
 import frc.robot.commands.ExampleAuto;
 import frc.robot.commands.Intake;
 import frc.robot.commands.LaunchSequence;
+import frc.robot.commands.NothingAuto;
 import frc.robot.subsystems.CANDriveSubsystem;
 import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -39,8 +41,7 @@ public class RobotContainer {
       DRIVER_CONTROLLER_PORT);
 
   // The operator's controller, by default it is setup to use a single controller
-  private final CommandXboxController operatorController = new CommandXboxController(
-      OPERATOR_CONTROLLER_PORT);
+  private final CommandXboxController operatorController = new CommandXboxController(OPERATOR_CONTROLLER_PORT);
 
   // The autonomous chooser
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -54,7 +55,11 @@ public class RobotContainer {
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
     // autoChooser.addOption
-    autoChooser.setDefaultOption("Autonomous", new ExampleAuto(driveSubsystem, fuelSubsystem));
+    SmartDashboard.putData("autoChooser", autoChooser);
+
+    autoChooser.setDefaultOption("ExampleAuto", new ExampleAuto(driveSubsystem, fuelSubsystem));
+    autoChooser.addOption("nothing", new NothingAuto(driveSubsystem, fuelSubsystem));
+    
   }
 
   /**
@@ -82,7 +87,6 @@ public class RobotContainer {
     driverController.povDown().whileTrue(new ClimbDown(climberSubsystem));
     // While the up arrow on the directional pad is held it will climb the robot
     driverController.povUp().whileTrue(new ClimbUp(climberSubsystem));
-
     // Set the default command for the drive subsystem to the command provided by
     // factory with the values provided by the joystick axes on the driver
     // controller. The Y axis of the controller is inverted so that pushing the

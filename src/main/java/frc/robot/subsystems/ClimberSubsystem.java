@@ -19,6 +19,8 @@ public class ClimberSubsystem extends SubsystemBase {
     // create brushless motors for each of the motors on the launcher mechanism
     climberMotor = new SparkMax(CLIMBER_MOTOR_ID, MotorType.kBrushless);
 
+    climberMotor.getEncoder();
+
     // create the configuration for the climb moter, set a current limit and apply
     // the config to the controller
     SparkMaxConfig climbConfig = new SparkMaxConfig();
