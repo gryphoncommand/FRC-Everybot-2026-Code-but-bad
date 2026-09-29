@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -29,12 +30,15 @@ public class Drive extends Command {
   private final PIDController m_xSpeedPID = new PIDController(.4, 0.0, 0.0);
   private final PIDController m_zRotationPID = new PIDController(.4, 0, 0);
   
+  public SendableChooser pidChooser;
 
-  public Drive(CANDriveSubsystem driveSystem, CommandXboxController driverController) {
+  public Drive(CANDriveSubsystem driveSystem, CommandXboxController driverController, SendableChooser pidChooser) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(driveSystem);
     driveSubsystem = driveSystem;
     controller = driverController;
+
+    this.pidChooser = pidChooser;
 
     // set up pid tolerance
     m_xSpeedPID.setTolerance(.005);
@@ -75,8 +79,11 @@ public class Drive extends Command {
     double xSpeedClampedOutput = MathUtil.clamp(totalXSpeedOutput, -1.0, 1.0);
     double zRotationClampedOutput = MathUtil.clamp(totalZRotationOutput, -1.0, 1.0);
 
-    driveSubsystem.driveArcade(xSpeedClampedOutput, zRotationClampedOutput);
-
+    if (pidChooser.getSelected().equals(true)){
+      driveSubsystem.driveArcade(xSpeedClampedOutput, zRotationClampedOutput);
+    } else {
+      driveSubsystem.driveArcade(-controller.getLeftY() * DRIVE_SCALING, controller.getRightX() * ROTATION_SCALING);
+    }
 
     SmartDashboard.putNumber("target velocity", targetVelocity);
     SmartDashboard.putNumber("target rotation velocity", targetRotationVelocity);

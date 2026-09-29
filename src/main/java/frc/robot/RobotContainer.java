@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -15,6 +16,8 @@ import frc.robot.commands.ClimbUp;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Eject;
 import frc.robot.commands.ExampleAuto;
+import frc.robot.commands.NothingAuto;
+import frc.robot.commands.ShootAuto;
 import frc.robot.commands.Intake;
 import frc.robot.commands.LaunchSequence;
 import frc.robot.subsystems.CANDriveSubsystem;
@@ -44,6 +47,7 @@ public class RobotContainer {
 
   // The autonomous chooser
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private final SendableChooser<Boolean> pidChooser = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -51,10 +55,18 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
+
+    pidChooser.setDefaultOption("false", false);
+    pidChooser.addOption("true", true);
+
+    SmartDashboard.putData("pid chooser", pidChooser);
+    SmartDashboard.putData("auto chooser", autoChooser);
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
     // autoChooser.addOption
-    autoChooser.setDefaultOption("Autonomous", new ExampleAuto(driveSubsystem, fuelSubsystem));
+    autoChooser.setDefaultOption("None", new NothingAuto());
+    autoChooser.addOption("ExampleAuto", new ExampleAuto(driveSubsystem, fuelSubsystem));
+    autoChooser.addOption("ShootAuto", new ShootAuto(fuelSubsystem));
   }
 
   /**
@@ -88,7 +100,7 @@ public class RobotContainer {
     // controller. The Y axis of the controller is inverted so that pushing the
     // stick away from you (a negative value) drives the robot forwards (a positive
     // value)
-    driveSubsystem.setDefaultCommand(new Drive(driveSubsystem, driverController));
+    driveSubsystem.setDefaultCommand(new Drive(driveSubsystem, driverController, pidChooser));
 
     fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
 
